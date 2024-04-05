@@ -12,9 +12,19 @@ fn fb(n: usize) -> String {
     format!("{}", results[n - 1])
 }
 
+#[tauri::command]
+fn fb_recursive(n: usize) -> i64 {
+    if n == 0 || n == 1 {
+        n as i64
+    } else {
+        fb_recursive(n - 1) + fb_recursive(n - 2)
+    }
+}
+
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![fb])
+        .invoke_handler(tauri::generate_handler![fb_recursive])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
