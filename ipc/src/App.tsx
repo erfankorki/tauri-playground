@@ -1,14 +1,30 @@
 import { useState } from "react";
-
 import { invoke } from "@tauri-apps/api/tauri";
+import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification';
+
+
 
 function App() {
   const [index, setIndex] = useState("");
   const [result, setResult] = useState("");
 
   async function generate() {
+    const returned_value: string = await invoke("fb_recursive", { n: Number(index) });
+    setResult(returned_value);
 
-    setResult(await invoke("fb_recursive", { n: Number(index) }));
+    let permissionGranted = await isPermissionGranted();
+
+    if (!permissionGranted) {
+      const permission = await requestPermission();
+      permissionGranted = permission === 'granted';
+      if (permissionGranted) {
+        sendNotification({ title: `${index}th Fibonnaci Number`, body: returned_value.toString() });
+      }
+    }
+    else {
+      sendNotification({ title: `${index}th Fibonnaci Number`, body: returned_value.toString() });
+    }
+
   }
 
   return (
