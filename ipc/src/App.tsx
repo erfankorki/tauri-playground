@@ -1,52 +1,34 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
+
 import { invoke } from "@tauri-apps/api/tauri";
-import "./App.css";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const [index, setIndex] = useState("");
+  const [result, setResult] = useState("");
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
+  async function generate() {
+
+    setResult(await invoke("fb", { n: Number(index) }));
   }
 
   return (
-    <div className="container">
-      <h1>Welcome to Tauri!</h1>
+    <main className="w-full items-center justify-center">
+      <article className="w-full flex items-center justify-center h-screen flex-col space-y-4">
+        <h1>
+          Generate Fibonacci Numbers
+        </h1>
+        <input className="w-80 flex items-center justify-center h-10 border-solid border-blue-600 border-2 rounded-lg" value={index} onChange={({ target }) => setIndex(target.value)} placeholder="enter index of Fibonnai Number" />
+        <button className="w-32 h-10" onClick={generate}>
+          Generate
+        </button>
 
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-
-      <p>{greetMsg}</p>
-    </div>
+        {result &&
+          <p className="">
+            The {index}th Fibonacci number is {result}
+          </p>
+        }
+      </article>
+    </main>
   );
 }
 
